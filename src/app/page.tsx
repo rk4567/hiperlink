@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { caller } from "@/trpc/server";
 
-const Page =  () => {
-  
+
+const Page = async () => {
+
+  const  data  =await caller.hello({ text: "John"});
+
   return (
     <div >
-      hello world!
-      <Button variant='link'>
-        click me
-      </Button>
+      {JSON.stringify(data)}
     </div>
   );
 }
