@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Ghost } from "lucide-react";
 
-const Page = () => {
+const Page =  () => {
+  
   return (
     <div >
       hello world!
