@@ -13,14 +13,14 @@ export const helloWorld = inngest.createFunction(
       return sandbox.sandboxId;
     });
 
-    const summarizer = createAgent({
+    const codeAgent = createAgent({
       name: "code-agent",
-      system: "You are an expert writer.  You write readable, concise, simple content.",
+      system: "You are an expert next.js seveloper. You write readable, maintainable code.You write simple Next.js $ React snippets",
       model: openai({ model: "gpt-4o" }),
     });
 
-    const {output} = await summarizer.run(
-      `Summarize the following text: ${event.data.value}`,
+    const {output} = await codeAgent.run(
+      `Write the following snippet: ${event.data.value}`,
 
     );
     
