@@ -1,5 +1,6 @@
 
-import { openai, createAgent, createTool, createNetwork } from "@inngest/agent-kit";
+// import { openai, createAgent, createTool, createNetwork } from "@inngest/agent-kit";
+import { gemini, createAgent, createTool, createNetwork } from "@inngest/agent-kit";
 import { inngest } from "./client";
 // import { success } from "zod";
 import { Sandbox } from '@e2b/code-interpreter'
@@ -20,11 +21,13 @@ export const helloWorld = inngest.createFunction(
       name: "code-agent",
       description: "An expert coding agent",
       system: PROMPT,
-      model: openai({
-        model: "gpt-4.1",
-        defaultParameters: {
-          temperature : 0.1,
-        },
+      model: gemini({
+        model: "gemini-2.5-pro",
+        // model: openai({
+        // model: "gpt-4.1",
+        // defaultParameters: {
+        //   temperature : 0.1,
+        // },
          }),
       tools: [
         createTool({
@@ -38,7 +41,7 @@ export const helloWorld = inngest.createFunction(
               const buffers = { stdout: "", stderr: "" };
 
               try {
-                const sandbox = await getSandbox(sandboxId)
+                const sandbox = await getSandbox(sandboxId);
                 const result = await sandbox.commands.run(command, {
                   onStdout: (data: string) => {
                     buffers.stdout += data;
@@ -66,7 +69,7 @@ export const helloWorld = inngest.createFunction(
                 path: z.string(),
                 content: z.string(),
               }),
-            )
+            ),
           }),
           handler: async(
             { files },
@@ -77,15 +80,16 @@ export const helloWorld = inngest.createFunction(
                 const updatedFiles = network.state.data.files || {};
                 const sandbox = await getSandbox(sandboxId);
                 for (const file of files) {
-                  await sandbox.files.write(file.path.content);
+                  await sandbox.files.write(file.path, file.content);
                   updatedFiles[file.path] = file.content;
                 }
-
                 return updatedFiles;
               } catch (e) {
                 return "Error: " + e;
               }
             });
+
+
             if (typeof newFiles === "object") {
               network.state.data.files = newFiles;
             }
@@ -117,11 +121,11 @@ export const helloWorld = inngest.createFunction(
         lifecycle: {
           onResponse: async ({ result, network }) => {
             const lastAssistantMessageText = 
-            lastAssistantTextMessageContent(result)
+            lastAssistantTextMessageContent(result);
 
             if (lastAssistantMessageText && network) {
               if (lastAssistantMessageText.includes("<task_summary>")) {
-                network.state.data.summary = lastAssistantMessageText
+                network.state.data.summary = lastAssistantMessageText;
               }
             }
             return result;
