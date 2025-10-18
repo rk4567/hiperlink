@@ -35,7 +35,7 @@ export const codeAgentFunction = inngest.createFunction(
       description: "An expert coding agent",
       system: PROMPT,
       model: gemini({
-        model: "gemini-2.5-pro",
+        model: "gemini-2.5-flash"
         // model: openai({
         // model: "gpt-4.1",
         // defaultParameters: {
@@ -66,7 +66,7 @@ export const codeAgentFunction = inngest.createFunction(
                 return result.stdout;
               } catch (e) {
                 console.error(
-                  `Command failed: ${e} \nstdout: ${buffers.stdout}\nstderror: ${buffers.stderr}`
+                  `Command failed: ${e} \nstdout: ${buffers.stdout} \nstderror: ${buffers.stderr}`,
                 );
                 return `command failed: ${e} \nstdout: ${buffers.stdout}\nstderr: ${buffers.stderr}`;
               }
@@ -81,7 +81,7 @@ export const codeAgentFunction = inngest.createFunction(
               z.object({
                 path: z.string(),
                 content: z.string(),
-              })
+              }),
             ),
           }),
           handler: async (
@@ -129,9 +129,9 @@ export const codeAgentFunction = inngest.createFunction(
               } catch (e) {
                 return "Error" + e;
               }
-            });
+            })
           },
-        }),
+        })
       ],
       lifecycle: {
         onResponse: async ({ result, network }) => {
@@ -167,11 +167,6 @@ export const codeAgentFunction = inngest.createFunction(
 
     const isError = result.state.data.summary || 
     Object.keys(result.state.data.files || {}).length === 0;
-
-    // const {output} = await codeAgent.run(
-    // `Write the following snippet: ${event.data.value}`,
-    //
-    // );
 
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
       const sandbox = await getSandbox(sandboxId);
@@ -219,5 +214,5 @@ export const codeAgentFunction = inngest.createFunction(
     };
     // const sandboxId = await step.run("get-sandbox-id"), async () => {
     // const sandboxId = await Sandbox.create("")}
-  }
+  },
 );
