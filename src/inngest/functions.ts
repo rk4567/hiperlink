@@ -35,7 +35,7 @@ export const codeAgentFunction = inngest.createFunction(
       description: "An expert coding agent",
       system: PROMPT,
       model: gemini({
-        model: "gemini-2.5-flash"
+        model: "gemini-2.5-pro"
         // model: openai({
         // model: "gpt-4.1",
         // defaultParameters: {
@@ -165,7 +165,7 @@ export const codeAgentFunction = inngest.createFunction(
 
     const result = await network.run(event.data.value);
 
-    const isError = result.state.data.summary || 
+    const isError = !result.state.data.summary || 
     Object.keys(result.state.data.files || {}).length === 0;
 
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
