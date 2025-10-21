@@ -16,8 +16,8 @@ import { prisma } from "@/lib/db";
 // import { stderr } from "process";
 
 interface AgentState {
-  files: {[path: string]: string};
   summary: string;
+  files: {[path: string]: string};
 };
 
 
