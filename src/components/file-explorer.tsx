@@ -16,6 +16,9 @@ import {
     BreadcrumbSeparator,
     BreadcrumbEllipsis,
 } from "@/components/ui/breadcrumb";
+import { convertFilesToTreeItems } from "@/lib/utils";
+import { string } from "zod";
+import { TreeView } from "./tree-view";
 
 type FileCollection = { [path: string]: string };
 
@@ -29,39 +32,59 @@ interface FileExplorerProps {
 };
 
 export const FileExplorer: React.FC<FileExplorerProps> = ({ files }) => {
-    // const filePaths = useMemo(() => Object.keys(files || {}), [files]);
     const [selectedFile, setSelectedFile] = useState<string | null>(() => {
         const fileKeys = Object.keys(files);
         return fileKeys.length > 0 ? fileKeys[0] : null;
     });
-    // const [copied, setCopied] = useState(false);
 
-    // const onSelect = useCallback((path: string) => {
-    //     setSelected(path);
-    //     setCopied(false);
-    // }, []);
+    const treeData = useMemo(() => {
+        return convertFilesToTreeItems(files)
+    },[files]);
 
-    // const onCopy = useCallback(async () => {
-    //     if (!selected) return;
-    //     try {
-    //         await navigator.clipboard.writeText(files[selected]);
-    //         setCopied(true);
-    //         setTimeout(() => setCopied(false), 1500);
-    //     } catch (e) {
-    //         console.error("copy failed", e);
-    //     }
-    // }, [selected, files]);
+    const handleFileSelect = useCallback(( 
+        filePath: string
+    ) => {
+
+        
+        if (files[filePath]) {
+            setSelectedFile(filePath);
+        }
+    },[files]);
+
 
     return (
         <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel minSize={30} defaultSize={30} className="bg-sidebar">
-                <p>todo: tree view</p>
+            <ResizablePanel defaultSize={30} minSize={30} className="bg-sidebar">
+                <TreeView
+                data={treeData}
+                value={selectedFile}
+                onSelect={handleFileSelect}
+                />
             </ResizablePanel>
             <ResizableHandle className="hover:bg-primary transition-colors" />
-            <ResizablePanel minSize={50} defaultSize={70}>
+            <ResizablePanel defaultSize={70} minSize={50}>
                 {selectedFile && files[selectedFile] ? (
-                    <div>
-                        <p>todo: codeview</p>
+                    <div className="h-full w-full flex flex-col">
+                        <div className="border-b bg-sidebar px-4 py-2 flex justify-between items-center gap-x-2">
+                            {/* TODO File breadcrumb */}
+                            <Hint text="Copy to clipboard" side="bottom">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="ml-auto"
+                                    onClick={() => {}}
+                                    disabled={false}
+                                >
+                                    <CopyIcon />
+                                </Button>
+                            </Hint>
+                        </div>
+                        <div className="flex-1 overflow-auto">
+                            <CodeView
+                                code={files[selectedFile]}
+                                lang={getLanguageFromExtension(selectedFile)}
+                            />
+                        </div>
                     </div>
                 ): (
                     <div className="flex h-full items-center text-muted-foreground">
