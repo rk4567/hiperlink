@@ -20,9 +20,16 @@ export const projectsRouter = createTRPCRouter({
         if (!existingproject) {
             throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
         }
-
-
         return existingproject;
+    }),
+    getMany: baseProcedure
+    .query(async () => {
+        const projects = await prisma.project.findMany({
+            orderBy:{
+
+            },
+        })
+        return projects;
     }),
     create: baseProcedure
     .input(
