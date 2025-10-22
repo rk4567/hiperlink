@@ -6,7 +6,7 @@ import { useState } from "react";
 import TextAreaAutosize from "react-textarea-autosize";
 import { ArrowUpIcon, Loader2Icon } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { useClerk } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ const formSchema = z.object({
 export const ProjectForm = () => {
     const router = useRouter();
     const trpc = useTRPC();
+    const clerk = useClerk();
     const queryClient = useQueryClient();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -40,8 +41,11 @@ export const ProjectForm = () => {
             // Invalidate usage status : TODO
         },
         onError: (error) => {
-            // TODO: Redirect to billing page if usage limit is reached
             toast.error(error.message);
+            if (error.data?.code === "UNAUTHORIZED") {
+                clerk.openSignIn();
+            }
+            
         },
     }));
 
