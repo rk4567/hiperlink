@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import dark from "@clerk/themes";
+import {dark} from "@clerk/themes";
 import { PricingTable } from "@clerk/nextjs";
 
 import { useCurrentTheme } from "@/hooks/use-current-theme";
@@ -27,15 +27,12 @@ const page = () => {
             </p>
             <PricingTable
             appearance={{
+                baseTheme: currentTheme === "dark" ? dark : undefined,
                 elements: {
-                    pricingTableCard: "border! shadow-none! rounded-lg!",
-                    baseTheme: currentTheme === "dark" ? dark : undefined,
+                    pricingTableCard: "border! shadow-none! rounded-lg!"
                 },
-
-                
             }}
-        />
-        </section>
+        />        </section>
         
     </div>
   )
