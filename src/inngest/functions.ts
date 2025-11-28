@@ -29,7 +29,7 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("hiperlink");
-      await sandbox.setTimeout(15 * 60 * 1000); // 15 minutes
+      await sandbox.setTimeout(60 * 60 * 1000); // 15 minutes
       return sandbox.sandboxId;
     });
 
