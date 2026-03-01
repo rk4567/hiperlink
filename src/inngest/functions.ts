@@ -15,6 +15,7 @@ import { getSandbox, lastAssistantTextMessageContent, parseAgentOutput } from ".
 import { z } from "zod";
 import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@/prompt";
 import { prisma } from "@/lib/db";
+import { SANDBOX_TIMEOUT } from "./types";
 // import { stderr } from "process";
 
 interface AgentState {
@@ -29,7 +30,7 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("hiperlink");
-      await sandbox.setTimeout(60 * 60 * 1000); // 15 minutes
+      await sandbox.setTimeout(SANDBOX_TIMEOUT); // Use the timeout constant
       return sandbox.sandboxId;
     });
 
